@@ -42,24 +42,25 @@ def enumerate_containers() -> List[Container]:
     client = docker.from_env()
     containers: List[Container] = client.containers.list(all=not settings.only_running)
 
+    self_id = os.getenv("HOSTNAME", "")
+    containers = [c for c in containers if c.id.startswith(self_id) is False]
+
     if settings.scan_scope != "COMPOSE":
         return containers
 
     try:
-        self_id = os.getenv("HOSTNAME", "")
         compose_project: str | None = None
-        if self_id:
-            try:
-                this = client.containers.get(self_id)
-                compose_project = (
-                    this.labels.get("com.docker.compose.project")
-                    if hasattr(this, "labels")
-                    else this.attrs.get("Config", {})
-                    .get("Labels", {})
-                    .get("com.docker.compose.project")
-                )
-            except Exception:
-                compose_project = None
+        try:
+            this = client.containers.get(self_id)
+            compose_project = (
+                this.labels.get("com.docker.compose.project")
+                if hasattr(this, "labels")
+                else this.attrs.get("Config", {})
+                .get("Labels", {})
+                .get("com.docker.compose.project")
+            )
+        except Exception:
+            compose_project = None
         if not compose_project:
             for c in containers:
                 labels = c.attrs.get("Config", {}).get("Labels", {}) or {}
