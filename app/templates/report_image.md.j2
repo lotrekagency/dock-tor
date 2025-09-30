@@ -1,0 +1,20 @@
+# Vulnerability Report for `{{ image }}`
+
+Generated: {{ generated_at }}
+
+Containers using this image: {{ binds|join(', ') if binds else '-' }}
+
+**Total Findings:** {{ findings }} ({% if sev_counts %}{% for sev, count in sev_counts|dictsort %}{{ sev }}:{{ count }}{% if not loop.last %}, {% endif %}{% endfor %}{% else %}no severity breakdown{% endif %})
+Threshold applied: {{ threshold }}
+
+{% if vulnerabilities %}
+## Vulnerabilities
+
+| Severity | ID | Package | Installed | Fixed | Title |
+|----------|----|---------|-----------|-------|-------|
+{% for v in vulnerabilities -%}
+| {{ v.Severity }} | {{ v.VulnerabilityID }} | {{ v.PkgName }} | {{ v.InstalledVersion }} | {{ v.FixedVersion or 'n/a' }} | {{ (v.Title or v.Description)|replace('|', ' ')|truncate(120, True, '…') }} |
+{% endfor %}
+{% else %}
+No vulnerabilities reported by scanner.
+{% endif %}

@@ -1,0 +1,16 @@
+# add a complete gitignore file here
+# Ignore files related to development environment and sensitive information
+.env
+*.log
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.mypy_cache/
+.Python
+env/
+venv/
+ENV/
+.venv/
+build/
+develop-eggs/

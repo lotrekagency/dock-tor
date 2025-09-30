@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Container Image Vulnerability Report</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', Arial, sans-serif; line-height: 1.4; color:#222; }
+    h1 { border-bottom:2px solid #444; padding-bottom:4px; }
+    table { border-collapse: collapse; width:100%; margin:1em 0; }
+    th, td { border:1px solid #ccc; padding:4px 6px; font-size: 14px; }
+    th { background:#f5f5f5; text-align:left; }
+    .sev-CRITICAL { background:#7f1d1d; color:#fff; }
+    .sev-HIGH { background:#b91c1c; color:#fff; }
+    .sev-MEDIUM { background:#f59e0b; }
+    .sev-LOW { background:#10b981; }
+    .sev-UNKNOWN { background:#6b7280; color:#fff; }
+    .small { font-size:12px; color:#555; }
+    code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, monospace; background:#f0f0f0; padding:2px 4px; border-radius:3px; }
+  </style>
+</head>
+<body>
+  {% if logo_data_uri %}
+  <div style="text-align:center;margin:10px 0 20px;">
+    <img src="{{ logo_data_uri }}" alt="dock-tor logo" style="max-width:200px; width:200px; height:auto;" />
+  </div>
+  {% endif %}
+  <h1>Container Image Vulnerability Report</h1>
+  <p class="small">Generated at: {{ generated_at }}</p>
+  <p>{{ results|length }} image(s) scanned.</p>
+  <table>
+    <thead>
+      <tr>
+        <th>Image</th>
+        <th>Containers</th>
+        <th>Total</th>
+        <th>Severities</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for r in results %}
+      <tr>
+        <td><code>{{ r.image }}</code></td>
+        <td>{{ r.binds|join(', ') if r.binds else '-' }}</td>
+        <td>{{ r.findings }}</td>
+        <td>
+          {% if r.sev_counts %}
+            {% for sev, count in r.sev_counts|dictsort %}
+              <span class="sev-{{ sev }}" style="display:inline-block; padding:1px 4px; margin:0 2px 2px 0; border-radius:3px;">{{ sev }}: {{ count }}</span>
+            {% endfor %}
+          {% else %}
+            <em>None</em>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  {% if grouped_vulnerabilities %}
+  <h2>Vulnerabilities</h2>
+  {% for g in grouped_vulnerabilities %}
+    <h3>Image: <code>{{ g.image }}</code></h3>
+    {% for sev in g.severities %}
+      <h4 class="sev-{{ sev['severity'] }}" style="padding:4px 6px; display:inline-block; border-radius:4px;">{{ sev['severity'] }} ({{ sev['items']|length }})</h4>
+      {% for item in sev['items'] %}
+        <div style="margin:0 0 0.75em 0.5em; border-left:3px solid #ccc; padding-left:8px;">
+          <strong>{{ item.VulnerabilityID }}</strong> in <code>{{ item.PkgName }}</code> ({{ item.InstalledVersion }} → {{ item.FixedVersion or 'n/a' }})<br/>
+          <span class="small">{{ item.Title or item.Description | truncate(180, True, '…') }}</span>
+        </div>
+      {% endfor %}
+    {% endfor %}
+  {% endfor %}
+  {% endif %}
+
+  <p class="small">Full JSON reports attached (if enabled).</p>
+</body>
+</html>

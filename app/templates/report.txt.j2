@@ -1,0 +1,25 @@
+Container Image Vulnerability Report
+Generated at: {{ generated_at }}
+
+{{ results|length }} image(s) scanned.
+
+{% for r in results -%}
+Image: {{ r.image }}
+  Containers: {{ r.binds|join(', ') if r.binds else '-' }}
+  Findings: {{ r.findings }} ({% if r.sev_counts %}{% for sev, count in r.sev_counts|dictsort %}{{ sev }}:{{ count }}{% if not loop.last %}, {% endif %}{% endfor %}{% else %}no severity breakdown{% endif %})
+
+{% endfor %}
+{% if grouped_vulnerabilities %}Vulnerabilities 
+------------------------------------------------
+{% for g in grouped_vulnerabilities -%}
+Image: {{ g.image }}
+{% for sev in g.severities -%}
+  {{ sev['severity'] }} ({{ sev['items']|length }})
+{% for item in sev['items'] -%}
+    * {{ item.VulnerabilityID }} in {{ item.PkgName }} ({{ item.InstalledVersion }} -> {{ item.FixedVersion or 'n/a' }})
+      {{ (item.Title or item.Description)|truncate(180, True, '…') }}
+{% endfor %}
+{% endfor %}
+{% endfor %}
+{% endif %}
+Full JSON reports attached (if enabled).

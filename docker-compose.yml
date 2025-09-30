@@ -1,0 +1,42 @@
+services:
+  dock-tor:
+    build: .
+    image: lotrekagency/dock-tor:latest
+    container_name: dock-tor
+    restart: unless-stopped
+    environment:
+      CRON_SCHEDULE: "${CRON_SCHEDULE:-* * * * *}"
+      LOG_LEVEL: "${LOG_LEVEL:-info}"
+      EXCLUDE_LABEL: "${EXCLUDE_LABEL:-docktor.ignore=true}"
+      MIN_NOTIFY_SEVERITY: "${MIN_NOTIFY_SEVERITY:-HIGH}"
+      SCAN_SCOPE: "${SCAN_SCOPE:-ALL}"
+      SMTP_HOST: "${SMTP_HOST:-mailpit}"
+      SMTP_PORT: "${SMTP_PORT:-1025}"
+      SMTP_USE_SSL: "${SMTP_USE_SSL:-false}"
+      SMTP_USER: "${SMTP_USER:-smtp-user}"
+      SMTP_PASS: "${SMTP_PASS:-smtp-pass}"
+      MAIL_FROM: "${MAIL_FROM:-scanner@example.com}"
+      MAIL_TO: "${MAIL_TO:-secops@example.com,devops@example.com}"
+      TRIVY_ARGS: "--severity HIGH,CRITICAL --ignore-unfixed --timeout 10m"
+      TRIVY_GITHUB_TOKEN: "${TRIVY_GITHUB_TOKEN:-}"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - trivy-cache:/home/scanner/.cache/trivy
+    cpus: "1.0"
+    mem_limit: "1g"
+    depends_on:
+      - mailpit
+  # This is for testing purposes only. Use a real SMTP server in production.
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: mailpit
+    restart: unless-stopped
+    ports:
+      - "8025:8025"   # Web UI (http://localhost:8025)
+    environment:
+      MP_MAX_MESSAGES: 5000
+      MP_SMTP_AUTH_ACCEPT_ANY: "1"     # Allow any username/password
+      MP_SMTP_AUTH_ALLOW_INSECURE: "1" # Allow insecure auth for local dev
+
+volumes:
+  trivy-cache:
