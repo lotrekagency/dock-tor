@@ -1,12 +1,12 @@
-# Contributing to dock-tor
+# Contributing to docktor
 
 Thanks for considering contributing! This guide explains how to get set up, coding standards, and the workflow for proposing changes.
 
 ## Development setup
 
 ```bash
-git clone https://github.com/your-org/dock-tor.git
-cd dock-tor
+git clone https://github.com/your-org/docktor.git
+cd docktor
 python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 ```

@@ -45,8 +45,8 @@ jobs:
         file: ./Dockerfile
         push: true
         tags: |
-          lotrekagency/dock-tor:${{ steps.semantic.outputs.new_release_version }}
-          lotrekagency/dock-tor:latest
+          lotrekagency/docktor:${{ steps.semantic.outputs.new_release_version }}
+          lotrekagency/docktor:latest
         labels: |
-          org.opencontainers.image.title=dock-tor
+          org.opencontainers.image.title=docktor
           org.opencontainers.image.version=${{ steps.semantic.outputs.new_release_version }}

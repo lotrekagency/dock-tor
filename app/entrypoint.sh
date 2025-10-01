@@ -26,7 +26,7 @@ mask_secret() {
 }
 
 echo "======================================="
-echo "[dock-tor] Container startup"
+echo "[docktor] Container startup"
 echo "Timestamp: $(date -u '+%Y-%m-%dT%H:%M:%SZ')"
 echo "======================================="
 print_kv CRON_SCHEDULE        "$CRON_SCHEDULE"
@@ -73,13 +73,13 @@ CRON_FILE=/etc/cron.d/scanner
 chmod 0644 "$CRON_FILE"
 crontab "$CRON_FILE"
 
-echo "[dock-tor] Installed cron job: $CRON_SCHEDULE"
+echo "[docktor] Installed cron job: $CRON_SCHEDULE"
 
 tail -F /var/log/cron.log &
 TAIL_PID=$!
 
 cleanup() {
-	echo "[dock-tor] Caught signal, terminating (tail pid=$TAIL_PID)." >&2
+	echo "[docktor] Caught signal, terminating (tail pid=$TAIL_PID)." >&2
 	kill "$TAIL_PID" 2>/dev/null || true
 	exit 0
 }

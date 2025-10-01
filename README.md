@@ -1,7 +1,7 @@
-# dock-tor
+# docktor
 
 <p align="center">
-	<img src="app/static/docktor-logo.png" alt="dock-tor logo" width="260" />
+	<img src="app/static/docktor-logo.png" alt="docktor logo" width="260" />
 </p>
 
 Lightweight, self-contained container image vulnerability scanning helper designed to drop into an existing Docker / docker‑compose environment and regularly email a concise vulnerability summary. It wraps [Trivy](https://github.com/aquasecurity/trivy) to scan each unique image referenced by your running (or all) containers, aggregates severity counts, renders plain text + optional HTML + per‑image Markdown/JSON artifacts, and sends them via SMTP. If no vulnerability meets your configured severity threshold the run exits quietly (no spammy “all clear” messages).
@@ -23,8 +23,8 @@ If you already have a compose stack, add a service (example snippet):
 
 ```yaml
 services:
-	dock-tor:
-		image: your-registry/dock-tor:latest # or build: .
+	docktor:
+		image: your-registry/docktor:latest # or build: .
 		build: .
 		environment:
 			SMTP_HOST: "smtp.mail.local"
@@ -44,14 +44,14 @@ services:
 Then run:
 
 ```bash
-docker compose run --rm dock-tor
+docker compose run --rm docktor
 ```
 
 ### 2. Ad‑hoc local run (Python)
 
 ```bash
-git clone https://github.com/your-org/dock-tor.git
-cd dock-tor
+git clone https://github.com/your-org/docktor.git
+cd docktor
 python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 export SMTP_HOST="smtp.example.com" SMTP_PORT=587 MAIL_TO="you@example.com" MAIL_FROM="scanner@example.com"
@@ -137,7 +137,7 @@ python -m mypy app
 Use `SCAN_SCOPE` to control which containers are enumerated:
 
 - `ALL` (default): scan every container visible to the Docker daemon (subject to `ONLY_RUNNING` and exclusion labels).
-- `COMPOSE`: restrict scanning to only the containers that belong to the same docker-compose project as the `dock-tor` service itself. This relies on the standard label `com.docker.compose.project`. If the project label cannot be resolved (e.g., running outside docker-compose) the scanner falls back to scanning all containers and logs a warning.
+- `COMPOSE`: restrict scanning to only the containers that belong to the same docker-compose project as the `docktor` service itself. This relies on the standard label `com.docker.compose.project`. If the project label cannot be resolved (e.g., running outside docker-compose) the scanner falls back to scanning all containers and logs a warning.
 
 Example:
 

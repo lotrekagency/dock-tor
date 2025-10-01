@@ -1,8 +1,8 @@
 services:
-  dock-tor:
+  docktor:
     build: .
-    image: lotrekagency/dock-tor:latest
-    container_name: dock-tor
+    image: lotrekagency/docktor:latest
+    container_name: docktor
     restart: unless-stopped
     environment:
       CRON_SCHEDULE: "${CRON_SCHEDULE:-* * * * *}"

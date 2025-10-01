@@ -64,7 +64,7 @@ def enumerate_containers() -> List[Container]:
         if not compose_project:
             for c in containers:
                 labels = c.attrs.get("Config", {}).get("Labels", {}) or {}
-                if labels.get("com.docker.compose.service") == "dock-tor":
+                if labels.get("com.docker.compose.service") == "docktor":
                     compose_project = labels.get("com.docker.compose.project")
                     break
         if not compose_project:
