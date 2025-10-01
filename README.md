@@ -34,11 +34,9 @@ services:
 			MAIL_FROM: "scanner@example.com"
 			MAIL_TO: "sec@example.com,dev@example.com"
 			MIN_NOTIFY_SEVERITY: "MEDIUM"   # optional (default LOW)
+			SCAN_SCOPE: "COMPOSE"           # optional (default ALL)
 		volumes:
 			- /var/run/docker.sock:/var/run/docker.sock:ro
-		# Optionally restrict to this compose project only:
-		# environment:
-		#   SCAN_SCOPE: COMPOSE
 ```
 
 Then run:
@@ -47,24 +45,7 @@ Then run:
 docker compose run --rm docktor
 ```
 
-### 2. Ad‑hoc local run (Python)
-
-```bash
-git clone https://github.com/your-org/docktor.git
-cd docktor
-python -m venv .venv && source .venv/bin/activate
-pip install -r requirements.txt
-export SMTP_HOST="smtp.example.com" SMTP_PORT=587 MAIL_TO="you@example.com" MAIL_FROM="scanner@example.com"
-python -m app.main
-```
-
-### 3. Minimal required environment
-
-At absolute minimum you need working SMTP host/port and at least one recipient (`MAIL_TO`). Auth is optional if your relay is open to the container network. Trivy must be available inside the container/path (`TRIVY_BIN`, default `trivy`).
-
-### 4. Typical automation
-
-Run it on a schedule via cron / GitHub Actions / Kubernetes CronJob / external orchestrator – the tool itself does not include scheduling logic.
+Change `SCAN_SCOPE` to `ALL` to scan every container visible to the Docker daemon (subject to `ONLY_RUNNING` and exclusion labels). `COMPOSE` restricts scanning to only the containers that belong to the same docker-compose project as the `docktor` service itself.
 
 ---
 
